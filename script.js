@@ -10,6 +10,7 @@ $(function () {
     });
 
     showHistory();
+
     function getWeather(params) {
         params.appid = API_KEY;
         params.units = "metric";
@@ -56,6 +57,7 @@ $(function () {
             alert("Unable to retrieve your location. Please allow location access and try again.");
         });
     });
+    
     $("#history-list").on("click", ".btn-close", function (e) {
         e.stopPropagation();
         var city = $(this).data("city");
@@ -69,4 +71,23 @@ $(function () {
         localStorage.setItem(KEY, JSON.stringify(newHistory));
         showHistory();
     });
+
+    function showHistory() {
+        var history = JSON.parse(localStorage.getItem(KEY) || "[]");
+
+        if (!history.length) {
+            $("#history-list").html('<li class="list-group-item text-muted">No searches yet</li>');
+            return;
+        }
+
+        var html = "";
+        for (var i = 0; i < history.length; i++) {
+            var h = history[i];
+            html += '<li class="list-group-item" data-city="' + h.name + '">' +
+                '<img class="history-icon" src="https://openweathermap.org/img/wn/' + h.icon + '@2x.png">' +
+                "<strong>" + h.name + "</strong> – " + h.temp + " °C, wind " + h.wind + " m/s" +
+                '<button class="btn-close ms-auto" data-city="' + h.name + '"></button></li>';
+        }
+        $("#history-list").html(html);
+    }
 });
